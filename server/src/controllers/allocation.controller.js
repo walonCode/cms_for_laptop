@@ -36,15 +36,26 @@ export const createAllocation = asyncHandler(async(req,res) => {
 })
 
 export const updateAllocation = asyncHandler(async(req,res) => {
-    const { id } = req.params
+    const { id, latopId, userId } = req.params
     const { value } = req.body
-    if(!id || !value){
-        return errorHandler(res, 400, 'Id and Value not found')
+    if(!id || !value || !latopId || !userId){
+        return errorHandler(res, 400, 'Ids and Value not found')
+    }
+    const user = await User.findById({_id:userId})
+    const laptop = await Laptop.findById({_id: laptopId})
+    if(!user || !laptop){
+        return errorHandler(res, 400, 'User and Laptop not found')
     }
     const updateAllocation = await Allocation.findByIdAndUpdate({_id:id},{returnStatus: value},{new:true, runValidators:true})
     if(!updateAllocation){
         return errorHandler(res, 400, 'allocation not found')
     }
+    user.laptopBorrowed = 0;
+    user.laptops.pop()
+    
+    laptop.status = 'AVAILABLE'
+    await user.save()
+    await laptop.save()
     return ApiResponse(res, 200, 'Allocation updated', updateAllocation)
 })
 
