@@ -4,23 +4,19 @@ import { ApiResponse } from '../helpers/responseHandler.js'
 import { errorHandler } from '../helpers/errorHandler.js'
 
 export const addLaptop = asyncHandler(async (req,res) => {
-    if(!req.body){
-        return errorHandler(res, 400, 'body is empty')
-    }
+    const {serialNo, model, brand } = req.body;
 
-    const {serialNo, name, brand } = req.body;
-
-    if(!serialNo || !name || !brand){
+    if(!serialNo || !model || !brand){
         return errorHandler(res, 400, "All fields required")
     }
 
     const existingLaptop = await Laptop.findOne({ serialNo });
     if (existingLaptop) {
-      return handleError(res, 400, 'Laptop with this serial number already exists');
+      return errorHandler(res, 400, 'Laptop with this serial number already exists');
     }
 
     const newLaptop = new Laptop({
-        name,
+        model,
         brand,
         serialNo
     })
@@ -37,19 +33,19 @@ export const getLaptop = asyncHandler(async(req,res) => {
         return errorHandler(res, 200, 'No laptop added yet')
     }
 
-    return ApiResponse(res,200, 'Laptop sent',allLaptop)
+    return ApiResponse(res, 200, 'Laptop sent', allLaptop)
 })
 
 export const updateLaptop = asyncHandler(async(req,res) => {
-    if(!req.params || !req.body){
-        return errorHandler(res, 400, ' please provide id and update value ')
-    }
-
     const { id } = req.params
     const { updateValue } = req.body
    
     if(!id){
         return errorHandler(res,400,'laptop id is needed')
+    }
+
+    if(!updateLaptop){
+        return errorHandler(res, 400, 'updateValue field is required')
     }
 
     const laptop = await Laptop.findById({_id:id})
