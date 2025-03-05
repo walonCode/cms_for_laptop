@@ -45,6 +45,7 @@ Create a `.env` file in the `server` directory and add the following:
 PORT=5000
 MONGO_URI=your-mongodb-connection-string
 JWT_SECRET=your-secret-key
+EXPRESS_SESSION_SECRET=your-express-session-secret
 ```
 
 ### **Run the Server**
