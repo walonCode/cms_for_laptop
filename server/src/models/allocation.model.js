@@ -18,7 +18,6 @@ const allocationSchema = new mongoose.Schema(
     },
     returnedAt: {
       type: Date,
-      required: false,
     },
     returnStatus: {
       type: String,

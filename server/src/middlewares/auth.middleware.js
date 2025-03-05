@@ -4,18 +4,18 @@ import { errorHandler} from '../helpers/errorHandler.js'
 
 export const authMiddleware = (req,res,next) => {
     const token = req.headers['authorization']
-    console.log(req.headers['authorization'])
-    console.log(token)
-    // console.log(process.env.JWT_SECRET)
-    const tokenValue = token.replace('Bearer ', '').trim()
-    console.log(tokenValue)
     if(!token){
         return errorHandler(res, 401, 'Access denied')
     }
-    const decoded = jwt.verify(tokenValue ,process.env.JWT_SECRET)
-    console.log(decoded)
-    req.user = decoded
-    next()  
+    const tokenValue = token.replace('Bearer ', '').trim()
+    try{
+        const decoded = jwt.verify(tokenValue ,process.env.JWT_SECRET)
+        req.user = decoded
+        next() 
+    }catch(error){
+        console.log(error)
+        return errorHandler(res, 500, 'server error')
+    }
 }
 
 export const authorize = (roles) => (req,res,next) => {

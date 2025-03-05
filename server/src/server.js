@@ -8,6 +8,7 @@ import { corsOptions } from './configs/corsOptions.js'
 import connectDB from './configs/connectDB.js'
 import session from 'express-session'
 import passport from './configs/passport.js'
+import allocationRouter from './routes/allocation.route.js'
 
 
 //for the .env file to work 
@@ -28,6 +29,7 @@ app.use(passport.session())
 //route
 app.use('/api/v1/users',userRouter)
 app.use('/api/v1/laptop',laptopRouter)
+app.use('/api/v1/allocation', allocationRouter)
 
 //error middleware
 app.use(errorMiddleware)
