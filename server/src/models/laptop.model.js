@@ -23,11 +23,11 @@ const laptopSchema = new mongoose.Schema(
     allocatedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: false,
     },
   },
   { timestamps: true }
 );
 
 const Laptop = mongoose.model('Laptop', laptopSchema);
+
 export default Laptop
