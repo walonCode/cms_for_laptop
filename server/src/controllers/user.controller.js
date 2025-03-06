@@ -6,6 +6,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv'
 
+config()
+
 export const register = asyncHandler(async (req,res) => {
     const { username, email,fullname, password,role} = req.body
     if(!username || !email || !fullname || !password){
@@ -47,12 +49,76 @@ export const login = asyncHandler(async(req,res) => {
         return errorHandler(res, 400, 'invalid credentails', 'wrong password')
     }
 
-    const token = jwt.sign({id:user._id, role:user.role}, process.env.JWT_SECRET,{
+    const accessToken = jwt.sign({id:user._id, role:user.role}, process.env.ACCESS_TOKEN_SECRET,{
+        expiresIn: '2hr'
+    })
+
+    const refreshToken = jwt.sign({id:user._id, role:user.role}, process.env.REFRESH_TOKEN_SECRET,{
         expiresIn: '1d'
     })
+
+    res.cookie("refreshToken",refreshToken , {
+        httpOnly:true,
+        sameSite: "Strict",
+        maxAge: 24 * 60 * 60 * 1000
+    })
+
+    user.refreshToken = refreshToken;
+    await user.save()
 
     const userResponse = user.toObject()
     delete userResponse.password
 
-    return ApiResponse(res, 200, 'login successful', {userResponse, token})
+    return ApiResponse(res, 200, 'login successful', {userResponse, accessToken})
 })
+
+export const refreshToken = asyncHandler(async (req, res) => {
+    const refreshToken  = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return errorHandler(res, 401, "Refresh token required");
+    }
+
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+        return errorHandler(res, 403, "Invalid refresh token");
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
+        if (err) return errorHandler(res, 403, "Invalid or expired refresh token");
+
+        const accessToken = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "2hr" }
+        );
+
+        return ApiResponse(res, 200, "Access token refreshed successfully", { accessToken });
+    });
+});
+
+export const logout = asyncHandler(async (req, res) => {
+
+    //passportjs logout function
+    req.logout((err) => {
+        if(err){
+            return errorHandler(res, 500, 'Error logging out of session')
+        }
+    })
+
+    const user = await User.findOne({ refreshToken: req.cookies.refreshToken });
+
+    if (!user) {
+        return errorHandler(res, 400, "User not found");
+    }
+
+    user.refreshToken = null; 
+    await user.save();
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        sameSite: "Strict"
+    });
+
+    return ApiResponse(res, 200, "Logged out successfully");
+});

@@ -9,6 +9,7 @@ import connectDB from './configs/connectDB.js'
 import session from 'express-session'
 import passport from './configs/passport.js'
 import allocationRouter from './routes/allocation.route.js'
+import cookieParser from 'cookie-parser'
 
 
 //for the .env file to work 
@@ -21,8 +22,12 @@ connectDB()
 
 //common middleware
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors(corsOptions))
-app.use(session({secret:process.env.EXPRESS_SESSION_SECRET, resave:false, saveUninitialized:false}))
+app.use(session({secret:process.env.EXPRESS_SESSION_SECRET, resave:false, saveUninitialized:false,cookie: {
+    httpOnly:true,
+    maxAge:24 * 60 * 60 * 1000
+}}))
 app.use(passport.initialize())
 app.use(passport.session())
 

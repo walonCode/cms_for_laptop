@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { asyncHandler } from '../helpers/asyncHandler.js'
 import { errorHandler} from '../helpers/errorHandler.js'
 
 export const authMiddleware = (req,res,next) => {
@@ -9,7 +8,7 @@ export const authMiddleware = (req,res,next) => {
     }
     const tokenValue = token.replace('Bearer ', '').trim()
     try{
-        const decoded = jwt.verify(tokenValue ,process.env.JWT_SECRET)
+        const decoded = jwt.verify(tokenValue, process.env.ACCESS_TOKEN_SECRET)
         req.user = decoded
         next() 
     }catch(error){

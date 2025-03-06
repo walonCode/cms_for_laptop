@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema(
       default: 0,
       max: 1,
     },
+    refreshToken: {
+      type:String,
+      default: ""
+    },
     laptops: [
       {
         type: mongoose.Schema.Types.ObjectId,

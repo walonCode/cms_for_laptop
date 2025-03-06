@@ -1,7 +1,10 @@
+import Register from "./components/Auth/Register";
 
 
 export default function App() {
   return (
-    <div>App</div>
+    <div>
+      <Register/>
+    </div>
   )
 }
