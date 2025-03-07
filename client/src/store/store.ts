@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from './features/users/userSlice'
+import laptopReducer from './features/laptops/laptopSlice'
 
 const store = configureStore({
     reducer:{
-        user:userReducer
+        user:userReducer,
+        laptop:laptopReducer
     }
 })
 
