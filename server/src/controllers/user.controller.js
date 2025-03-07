@@ -60,3 +60,17 @@ export const login = asyncHandler(async (req, res) => {
 
     return ApiResponse(res, 200, 'user logged in', {userResponse, accessToken})
 });
+
+export const getUserProfile = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return errorHandler(res, 404, 'User not found');
+    }
+
+    const userResponse = user.toObject();
+    delete userResponse.password; 
+
+    return ApiResponse(res, 200, 'User profile retrieved successfully', userResponse);
+});

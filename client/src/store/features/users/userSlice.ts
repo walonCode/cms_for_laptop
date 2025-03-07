@@ -68,6 +68,17 @@ export const register = createAsyncThunk('user/register', async (data: RegisterD
     }
 });
 
+//get user thunk
+export const getUser = createAsyncThunk('user/getUser',async(_,{rejectWithValue}) => {
+    try{
+        const response = await axiosInstance.get('/users/profile')
+        return (await response.data.userResponse) as User
+    }catch(error){
+        console.log(error)
+        return rejectWithValue('getting user profile failed')
+    }
+})
+
 const userSlice = createSlice({
     name: "user",
     initialState,
