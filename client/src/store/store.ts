@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from './features/users/userSlice'
 import laptopReducer from './features/laptops/laptopSlice'
+import allocationReducer from './features/allocations/allocationSlice'
 
 const store = configureStore({
     reducer:{
         user:userReducer,
-        laptop:laptopReducer
+        laptop:laptopReducer,
+        allocation:allocationReducer
     }
 })
 
