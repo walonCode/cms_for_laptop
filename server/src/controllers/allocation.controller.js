@@ -36,9 +36,9 @@ export const createAllocation = asyncHandler(async(req,res) => {
 })
 
 export const updateAllocation = asyncHandler(async(req,res) => {
-    const { id, latopId, userId } = req.params
+    const { id, laptopId, userId } = req.params
     const { value } = req.body
-    if(!id || !value || !latopId || !userId){
+    if(!id || !value || !laptopId || !userId){
         return errorHandler(res, 400, 'Ids and Value not found')
     }
     const user = await User.findById({_id:userId})

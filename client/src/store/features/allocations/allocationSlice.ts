@@ -21,9 +21,9 @@ interface AllocationSlice extends EntityState<Allocation, string> {
 }
 
 // Create Allocation Thunk
-export const addAllocation = createAsyncThunk("allocation/addAllocation", async ({ laptop, user }: AddAllocation, { rejectWithValue }) => {
+export const addAllocation = createAsyncThunk("allocation/addAllocation", async ({ laptopId, userId, data }: {laptopId:string, userId:string, data:AddAllocation}, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.post(`/allocation/${laptop}/${user}`);
+        const response = await axiosInstance.post(`/allocation/${laptopId}/${userId}`,data);
         return response.data.newAllocation as Allocation;
     } catch (error) {
         console.error(error)
