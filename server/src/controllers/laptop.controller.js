@@ -54,8 +54,8 @@ export const updateLaptop = asyncHandler(async(req,res) => {
         return errorHandler(res, 401, 'laptop not found')
     }
 
-    const updateLaptop = await Laptop.findByIdAndUpdate({_id:id},{status: updateValue}, {runValidators:true, new:true})
-    return ApiResponse(res, 200, "laptop updated", updateLaptop)
+    const updatedLaptop = await Laptop.findByIdAndUpdate({_id:id},{status: updateValue}, {runValidators:true, new:true})
+    return ApiResponse(res, 200, "laptop updated", updatedLaptop)
 })
 
 export const deleteLaptop = asyncHandler(async(req,res) => {
