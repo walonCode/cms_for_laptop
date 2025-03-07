@@ -1,5 +1,8 @@
 import {  useState } from 'react';
-import axios from 'axios';
+import { register } from '../../store/features/users/userSlice';
+import { useAppDispatch } from '../../hooks/storeHook';
+import { useNavigate } from 'react-router-dom';
+
 
 const Register = () => {
     const [username, setUsername] = useState("")
@@ -8,21 +11,32 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [email, setEmail] = useState("")
     const [role, setRole] = useState("")
+    
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(password === confirmPassword){
-            const data = {
-                username,
-                password,
-                role,
-                fullname,
-                email
+            try{
+                const data = {
+                    username,
+                    fullname,
+                    password,
+                    email,
+                    role
+                }
+                await dispatch(register(data))
+                navigate('/')
+                setConfirmPassword('')
+                setPassword('')
+                setRole('')
+                setEmail('')
+                setUsername('')
+                setFullname('')
+            }catch(error){
+                console.error(error)
             }
-            const response = await axios.post('http://localhost:3000/api/v1/users/register',data)
-            console.log('register completed',response.data)
-        }else{
-            console.log('not matched')
         }
     };
 

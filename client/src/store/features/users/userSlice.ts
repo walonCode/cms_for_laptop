@@ -3,6 +3,7 @@ import { axiosInstance } from "../../../api/axiosInstance";
 import Cookies from "js-cookie";
 import { RootState } from "../../store";
 
+
 interface RegisterData {
     fullname: string;
     username: string;
@@ -47,8 +48,8 @@ export const login = createAsyncThunk('user/login', async (data: LoginData, { re
             return rejectWithValue("Email and password are required");
         }
         const response = await axiosInstance.post('/users/login', data);
-        Cookies.set("accessToken", response.data.accessToken, { expires: 1, secure:true });
-        return response.data as Response;
+        Cookies.set("accessToken", response.data.data.accessToken, { expires: 1, secure:true });
+        return (await response.data.data.userResponse) as Response;
     } catch (error) {
        console.error(error)
     }
@@ -62,7 +63,7 @@ export const register = createAsyncThunk('user/register', async (data: RegisterD
             return rejectWithValue("All fields are required");
         }
         const response = await axiosInstance.post('/users/register', data);
-        return response.data;
+        return response.data.data.userResponse;
     } catch (error) {
         return rejectWithValue(error|| "Registration failed");
     }
@@ -72,7 +73,7 @@ export const register = createAsyncThunk('user/register', async (data: RegisterD
 export const getUser = createAsyncThunk('user/getUser',async(_,{rejectWithValue}) => {
     try{
         const response = await axiosInstance.get('/users/profile')
-        return (await response.data.userResponse) as User
+        return (await response.data.data.userResponse) as User
     }catch(error){
         console.log(error)
         return rejectWithValue('getting user profile failed')

@@ -24,7 +24,7 @@ axiosInstance.interceptors.response.use(
         if (error.response) {
             if (error.response.status === 401) {
                 Cookies.remove("accessToken");
-                window.location.href = "/login";
+                window.location.href = "/";
             } else if (error.response.status === 403) {
                 alert("You do not have permission to access this resource.");
                 window.location.href = "/";

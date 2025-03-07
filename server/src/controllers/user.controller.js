@@ -4,8 +4,8 @@ import { errorHandler } from '../helpers/errorHandler.js'
 import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { config } from 'dotenv'
-import passport from 'passport';
+import { config } from 'dotenv';
+
 
 config()
 

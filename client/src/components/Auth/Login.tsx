@@ -1,27 +1,29 @@
 import  { useState } from 'react';
-import axios from 'axios';
+import { useAppDispatch } from '../../hooks/storeHook';
+import { login } from '../../store/features/users/userSlice';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({setIsAuthenticated}:{SetIsAuthenticated:boolean}) => {
+const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
    
 
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
+        try{
             const data = {
                 email,
                 password
             }
-            const response = await axios.post('http://localhost:3000/api/v1/users/login', data ,{
-                withCredentials:true,
-            });
-            console.log(response.data)
-            setIsAuthenticated(true)
-        } catch (error) {
+            await dispatch(login(data))
+            navigate('/')
+            setEmail("")
+            setPassword("")
+        }catch(error){
             console.error(error)
-            alert('Error during login');
         }
     };
 
