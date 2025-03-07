@@ -16,7 +16,7 @@ This is the backend for the **CMS For Laptop** project, built using Node.js, Exp
 - **Express.js** - Backend framework
 - **MongoDB** - NoSQL database
 - **Mongoose** - ODM for MongoDB
-- **Passport.js** - Authentication middleware
+- **Custom Auth** - Authentication middleware
 - **JWT (JSON Web Token)** - Secure authentication
 - **CORS** - Cross-Origin Resource Sharing
 - **Nodemon** - Development tool for automatic restarts
@@ -44,8 +44,8 @@ Create a `.env` file in the `server` directory and add the following:
 ```env
 PORT=5000
 MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your-secret-key
-EXPRESS_SESSION_SECRET=your-express-session-secret
+ACCESS_TOKEN_SECRET=your-secret-key
+
 ```
 
 ### **Run the Server**
@@ -56,9 +56,8 @@ npm run dev  # Starts the server with nodemon
 ## API Routes
 
 ### **Authentication**
-- `POST /api/auth/register` → Register a new user
-- `POST /api/auth/login` → Authenticate user and return JWT
-- `GET /api/auth/me` → Get current authenticated user (Protected)
+- `POST /api/users/register` → Register a new user
+- `POST /api/users/login` → Authenticate user and return JWT
 
 ### **User Routes**
 - `GET /api/users` → Get all users (Admin only)
