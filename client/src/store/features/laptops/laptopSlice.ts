@@ -28,7 +28,7 @@ export const addLaptop = createAsyncThunk("laptop/addLaptop", async (data: AddLa
             return rejectWithValue("Invalid fields");
         }
         const response = await axiosInstance.post("/laptop", data);
-        return response.data.data.newLaptop as Laptop;
+        return response.data.newLaptop as Laptop;
     } catch (error) {
         console.error(error)
         return rejectWithValue("Failed to add laptop");
@@ -39,7 +39,7 @@ export const addLaptop = createAsyncThunk("laptop/addLaptop", async (data: AddLa
 export const getLaptop = createAsyncThunk("laptop/getLaptop", async (_, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.get("/laptop");
-        return (await response.data.data.allLaptop) as Laptop[] || [];
+        return (await response.data.allLaptop || []) as Laptop[];
     } catch (error) {
         console.error(error)
         return rejectWithValue("Failed to fetch laptops");
@@ -53,7 +53,7 @@ export const updateLaptop = createAsyncThunk("laptop/updateLaptop", async (data:
         if (!_id) return rejectWithValue("Laptop ID is required");
 
         const response = await axiosInstance.patch(`/laptop/${_id}`, { brand, model, serialNo, status });
-        return response.data.data.updateLaptop as Laptop;
+        return response.data.updateLaptop as Laptop;
     } catch (error) {
         console.error(error)
         return rejectWithValue("Update failed");
@@ -110,7 +110,7 @@ const laptopSlice = createSlice({
             })
             .addCase(getLaptop.fulfilled, (state, action) => {
                 state.status = "idle";
-                laptopAdapter.setAll(state, action.payload);
+                laptopAdapter.setAll(state, action.payload || []);
             })
             .addCase(getLaptop.rejected, (state, action) => {
                 state.status = "failed";
