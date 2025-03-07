@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
-const userSchema = new mongoose.Schema(
-  {
+const userSchema = new mongoose.Schema({
     fullname: {
       type:String,
       required:true
@@ -30,16 +29,10 @@ const userSchema = new mongoose.Schema(
       default: 0,
       max: 1,
     },
-    refreshToken: {
-      type:String,
-      default: ""
-    },
-    laptops: [
-      {
+    laptops: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Laptop',
-      },
-    ],
+      }],
   },
   { timestamps: true }
 );

@@ -7,7 +7,7 @@ const Register = () => {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const [email, setEmail] = useState("")
-    const [roles, setRoles] = useState("")
+    const [role, setRole] = useState("")
 
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -15,12 +15,14 @@ const Register = () => {
             const data = {
                 username,
                 password,
-                roles,
+                role,
                 fullname,
                 email
             }
             const response = await axios.post('http://localhost:3000/api/v1/users/register',data)
             console.log('register completed',response.data)
+        }else{
+            console.log('not matched')
         }
     };
 
@@ -60,7 +62,7 @@ const Register = () => {
                 </div>
                 <div>
                     <label htmlFor='roles'>Roles</label>
-                    <select id="roles" value={roles} onChange={(e) => setRoles(e.target.value)}>
+                    <select id="roles" value={role} onChange={(e) => setRole(e.target.value)}>
                         <option>default</option>
                         <option value="USER">User</option>
                         <option value="ADMIN">Admin</option>

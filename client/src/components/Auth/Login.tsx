@@ -1,28 +1,26 @@
 import  { useState } from 'react';
 import axios from 'axios';
 
-const LoginForm = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
+const Login = ({setIsAuthenticated}:{SetIsAuthenticated:boolean}) => {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
+   
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/v1/users/login', formData);
-            // Store accessToken in localStorage or a cookie
-            localStorage.setItem('accessToken', response.data.accessToken);
-            alert('Login successful!');
-            // Optionally, redirect to dashboard or home page
+            const data = {
+                email,
+                password
+            }
+            const response = await axios.post('http://localhost:3000/api/v1/users/login', data ,{
+                withCredentials:true,
+            });
+            console.log(response.data)
+            setIsAuthenticated(true)
         } catch (error) {
+            console.error(error)
             alert('Error during login');
         }
     };
@@ -36,8 +34,8 @@ const LoginForm = () => {
                     <input
                         type="email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
@@ -46,8 +44,8 @@ const LoginForm = () => {
                     <input
                         type="password"
                         name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
@@ -57,4 +55,4 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+export default Login;

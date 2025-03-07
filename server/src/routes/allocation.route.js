@@ -8,4 +8,4 @@ allocationRouter.route('/').get(getAllocation)
 allocationRouter.route('/:id').delete(deleteAllocation)
 allocationRouter.route('/:id/:laptopId/:userId').patch(updateAllocation)
 
-export default allocationRouter 
+export default allocationRouter

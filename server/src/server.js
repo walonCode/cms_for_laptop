@@ -6,8 +6,6 @@ import userRouter from './routes/user.route.js'
 import cors from 'cors'
 import { corsOptions } from './configs/corsOptions.js'
 import connectDB from './configs/connectDB.js'
-import session from 'express-session'
-import passport from './configs/passport.js'
 import allocationRouter from './routes/allocation.route.js'
 import cookieParser from 'cookie-parser'
 
@@ -24,12 +22,7 @@ connectDB()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors(corsOptions))
-app.use(session({secret:process.env.EXPRESS_SESSION_SECRET, resave:false, saveUninitialized:false,cookie: {
-    httpOnly:true,
-    maxAge:24 * 60 * 60 * 1000
-}}))
-app.use(passport.initialize())
-app.use(passport.session())
+
 
 //route
 app.use('/api/v1/users',userRouter)
