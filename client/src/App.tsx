@@ -8,6 +8,16 @@ import Hero from './components/Hero'
 import Footer from './components/Footer'
 import Dashboard from './components/Dashboard/Dashboard'
 import Profile from './components/Auth/Profile'
+import LaptopCard from './components/Laptop/LaptopCard'
+
+
+const sampleLaptop = {
+  serialNo: "XYZ12345",
+  brand: "Dell",
+  model: "XPS 15",
+  status: "ASSIGNED",
+  allocatedTo: "John Doe",
+};
 
 export default function App() {
   return(
@@ -15,7 +25,7 @@ export default function App() {
       <Navbar/>
       <Routes>
         <Route path='/' element={<Layout/>}>
-        <Route index element={<Hero/>}/>
+        <Route index element={<LaptopCard laptop={sampleLaptop} role='ADMIN'/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
 

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
       type: String,
-      enum: ['ADMIN', 'FACILITATOR','USER'],
+      enum: ['ADMIN', 'FACILITATOR'],
       default: 'USER',
     },
     laptopBorrowed:{
