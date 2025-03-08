@@ -2,9 +2,14 @@ import Laptop from '../models/laptop.model.js'
 import { asyncHandler } from '../helpers/asyncHandler.js'
 import { ApiResponse } from '../helpers/responseHandler.js'
 import { errorHandler } from '../helpers/errorHandler.js'
+import {addLaptopSchema, updateLaptopSchema} from '../validators/laptop.validator.js'
 
 export const addLaptop = asyncHandler(async (req,res) => {
-    const {serialNo, model, brand } = req.body;
+    const result = addLaptopSchema.safeParse(req.body)
+    if(!result.success){
+        return errorHandler(res, 400, "invalid input")
+    }
+    const {serialNo, model, brand } = result.data;
 
     if(!serialNo || !model || !brand){
         return errorHandler(res, 400, "All fields required")
@@ -38,7 +43,12 @@ export const getLaptop = asyncHandler(async(req,res) => {
 
 export const updateLaptop = asyncHandler(async(req,res) => {
     const { id } = req.params
-    const { updateValue } = req.body
+    
+    const result = updateLaptopSchema.safeParse(req.body)
+    if(!result.success){
+        return errorHandler(res, 400, "invalid input")
+    }
+    const { updateValue } = result.data
    
     if(!id){
         return errorHandler(res,400,'laptop id is needed')

@@ -5,15 +5,18 @@ import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
+import { loginSchema, registerSchema } from '../validators/auth.validator.js';
 
 
 config()
 
 export const register = asyncHandler(async (req,res) => {
-    const { username, email,fullname, password,role} = req.body
-    if(!username || !email || !fullname || !password){
-        return errorHandler(res, 400, "All field required", 'invalid body')
+    const result = registerSchema.safeParse(req.body)
+    if(!result.success){
+        return errorHandler(res, 400, "invalid input")
     }
+    const { username, email, fullname, password,role} = result.data
+
     const user = await User.findOne({ email })
     if(user){
         return errorHandler(res, 401, 'User already exist')
@@ -36,11 +39,12 @@ export const register = asyncHandler(async (req,res) => {
 })
 
 export const login = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return errorHandler(res, 400, 'All fields required', 'invalid fields');
+    const result = loginSchema.safeParse(req.body);
+    if (!result.success) {
+        return errorHandler(res, 400, 'invalid input', 'invalid fields');
     }
 
+    const { password, email} = result.data;
     const user = await User.findOne({email})
     if(!user){
         return errorHandler(res,400,'User not found')
