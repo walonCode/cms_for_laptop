@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { getUser } from './store/features/users/userSlice.ts'
 import { getLaptop } from './store/features/laptops/laptopSlice.ts'
 import Cookies from 'js-cookie'
+import  "react-toastify/dist/ReactToastify.css";
 
 const token = Cookies.get('accessToken')
 
