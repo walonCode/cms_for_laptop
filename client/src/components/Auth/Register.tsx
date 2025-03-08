@@ -15,8 +15,10 @@ import { UserPlus, Mail, User, Lock, UserCircle, AlertCircle, CheckCircle } from
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import {toast, ToastContainer} from 'react-toastify'
+import useAuthRedirect from "@/hooks/useAuthRedirect"
 
 const Register = () => {
+  useAuthRedirect()
   const [username, setUsername] = useState("")
   const [fullname, setFullname] = useState("")
   const [password, setPassword] = useState("")

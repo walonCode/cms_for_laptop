@@ -40,6 +40,8 @@ const initialState: Slice = {
     errorMessage: null,
 };
 
+
+
 // Login Thunk
 export const login = createAsyncThunk('user/login', async (data: LoginData, { rejectWithValue }) => {
     try {
@@ -52,6 +54,7 @@ export const login = createAsyncThunk('user/login', async (data: LoginData, { re
         return (await response.data.data.userResponse) as Response;
     } catch (error) {
        console.error(error)
+       return rejectWithValue("Login failed");
     }
 });
 
@@ -66,7 +69,7 @@ export const register = createAsyncThunk('user/register', async (data: RegisterD
         return response.data.data.userResponse;
     } catch (error) {
         return rejectWithValue(error|| "Registration failed");
-    }
+    } 
 });
 
 //get user thunk

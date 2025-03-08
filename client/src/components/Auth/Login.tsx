@@ -8,8 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Lock, Mail, LogIn } from "lucide-react"
 import { toast, ToastContainer } from "react-toastify"
+import useAuthRedirect from "@/hooks/useAuthRedirect"
 
 const Login = () => {
+  useAuthRedirect()
+  
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)

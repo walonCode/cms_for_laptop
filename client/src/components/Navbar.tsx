@@ -4,6 +4,7 @@ import { FaBars, FaUser, FaSignInAlt, FaSignOutAlt, FaRegUserCircle } from 'reac
 import { isAuthenticatedState } from "../store/features/users/userSlice";
 import { logout } from '../store/features/users/userSlice';
 import { useAppSelector,useAppDispatch } from "../hooks/storeHook";
+import {LayoutDashboardIcon } from "lucide-react"
 
 
 const Navbar = () => {
@@ -27,11 +28,12 @@ const Navbar = () => {
 
         
         <ul className={`hidden md:flex space-x-8 ${isMenuOpen ? 'block' : 'block'}`}>
-          <li>
-            <Link to="/" className="text-white hover:text-yellow-400">Home</Link>
-          </li>
           {isAuthenticated ? (
             <>
+              <li>
+                <Link to="/dashboard" className="text-white flex items-center gap-2 hover:text-yellow-400">
+                <LayoutDashboardIcon/>Dashboard</Link>
+              </li>
               <li>
                 <Link to="/profile" className="text-white flex items-center hover:text-yellow-400">
                   <FaUser className="mr-2" /> {user.username}
