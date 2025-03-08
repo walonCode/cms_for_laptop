@@ -5,6 +5,7 @@ import Login from './components/Auth/Login'
 import Register from './components/Auth/Register'
 import RequireAuth from './components/Auth/RequireAuth'
 import Hero from './components/Hero'
+import LaptopStats from './components/Laptop/LaptopStat'
 import Footer from './components/Footer'
 import Dashboard from './components/Dashboard/Dashboard'
 import Profile from './components/Auth/Profile'
@@ -25,13 +26,13 @@ export default function App() {
       <Navbar/>
       <Routes>
         <Route path='/' element={<Layout/>}>
-        <Route index element={<LaptopCard laptop={sampleLaptop} role='ADMIN'/>}/>
+        <Route index element={<LaptopStats stats={{total: 10, available: 5, assigned: 5, faulty: 0, returned: 0}}/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
 
         <Route element={<RequireAuth/>}>
           <Route path='/profile' element={<Profile/>}/>
-          <Route path='/dashboard' element={<Dashboard/>}/>
+          <Route path='/dashboard' element={<Dashboard role="ADMIN"/>}/>
         </Route>
         
         </Route>

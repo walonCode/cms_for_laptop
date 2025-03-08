@@ -75,10 +75,9 @@ const Register = () => {
                     />
                 </div>
                 <div>
-                    <label htmlFor='roles'>Roles</label>
-                    <select id="roles" value={role} onChange={(e) => setRole(e.target.value)}>
+                    <label htmlFor='role'>Role</label>
+                    <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
                         <option>default</option>
-                        <option value="USER">User</option>
                         <option value="ADMIN">Admin</option>
                         <option value="FACILITATOR">Facilitator</option>
                     </select>
