@@ -315,5 +315,3 @@ Contributions are welcome! If you find any bugs or want to improve the app, feel
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](../license.txt) file for details.
-```
-
