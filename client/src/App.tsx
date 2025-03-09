@@ -8,6 +8,7 @@ import Hero from './components/Hero'
 import Footer from './components/Footer'
 import Dashboard from './components/Dashboard/Dashboard'
 import Profile from './components/Auth/Profile'
+import AddLaptop from './components/Laptop/AddLaptop'
 
 
 
@@ -24,7 +25,8 @@ export default function App() {
 
         <Route element={<RequireAuth/>}>
           <Route path='/profile' element={<Profile/>}/>
-          <Route path='/dashboard' element={<Dashboard />}/>
+          <Route path='/dashboard' element={<Dashboard role='ADMIN' />}/>
+          <Route path='/add_laptop' element={<AddLaptop/>}/>
         </Route>
         
         </Route>

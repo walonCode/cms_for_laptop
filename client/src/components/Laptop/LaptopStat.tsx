@@ -52,9 +52,9 @@ export default function LaptopStats({ stats }: { stats: LaptopStats }) {
     <>
       {statItems.map((item) => (
         <Card key={item.label} className="overflow-hidden transition-all hover:shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
+          <CardContent className="p-8">
+            <div className="flex items-start gap-4 justify-between">
+              <div className="flex flex-col items-center gap-2">
                 <span className="text-sm font-medium text-muted-foreground">{item.label}</span>
                 <span className={`text-2xl font-bold ${item.textColor}`}>{item.value}</span>
               </div>

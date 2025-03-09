@@ -56,12 +56,12 @@ const statusConfig: Record<LaptopStatus, StatusConfig> = {
 
 // Define the Laptop interface with proper typing
 interface Laptop {
-  id: number
+  _id: string
   serialNo: string
   brand: string
   model: string
   status: LaptopStatus
-  allocatedTo: string | null
+  allocatedTo: string | undefined
 }
 
 // Define the role type

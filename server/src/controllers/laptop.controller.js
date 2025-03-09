@@ -10,11 +10,7 @@ export const addLaptop = asyncHandler(async (req,res) => {
         return errorHandler(res, 400, "invalid input")
     }
     const {serialNo, model, brand } = result.data;
-
-    if(!serialNo || !model || !brand){
-        return errorHandler(res, 400, "All fields required")
-    }
-
+    
     const existingLaptop = await Laptop.findOne({ serialNo });
     if (existingLaptop) {
       return errorHandler(res, 400, 'Laptop with this serial number already exists');
@@ -37,13 +33,13 @@ export const getLaptop = asyncHandler(async(req,res) => {
     if(allLaptop.length === 0){
         return errorHandler(res, 200, 'No laptop added yet')
     }
-
-    return ApiResponse(res, 200, 'Laptop sent', allLaptop)
+    
+    return ApiResponse(res, 200, 'Laptop sent', allLaptop )
 })
 
 export const updateLaptop = asyncHandler(async(req,res) => {
     const { id } = req.params
-    
+
     const result = updateLaptopSchema.safeParse(req.body)
     if(!result.success){
         return errorHandler(res, 400, "invalid input")

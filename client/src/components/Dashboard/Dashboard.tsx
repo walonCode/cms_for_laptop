@@ -6,56 +6,65 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ErrorBoundary } from "./error-boundary"
 import LaptopStats from "../Laptop/LaptopStat"
 import LaptopCard from "../Laptop/LaptopCard"
+import { Link } from "react-router-dom"
+import { useAppSelector } from "@/hooks/storeHook"
+import { getAllLaptop } from "@/store/features/laptops/laptopSlice"
+import useAuthRedirect from "@/hooks/useAuthRedirect"
 
-const mockLaptops = [
-  { id: 1, serialNo: "ABC123", brand: "Dell", model: "XPS 13", status: "AVAILABLE", allocatedTo: null },
-  { id: 2, serialNo: "XYZ456", brand: "HP", model: "Pavilion 15", status: "ASSIGNED", allocatedTo: "John Doe" },
-  { id: 3, serialNo: "LMN789", brand: "Apple", model: "MacBook Air", status: "FAULTY", allocatedTo: null },
-  { id: 4, serialNo: "DEF321", brand: "Lenovo", model: "ThinkPad X1", status: "RETURNED", allocatedTo: "Jane Smith" },
-]
+// const mockLaptops = [
+//   { id: 1, serialNo: "ABC123", brand: "Dell", model: "XPS 13", status: "AVAILABLE", allocatedTo: null },
+//   { id: 2, serialNo: "XYZ456", brand: "HP", model: "Pavilion 15", status: "ASSIGNED", allocatedTo: "John Doe" },
+//   { id: 3, serialNo: "LMN789", brand: "Apple", model: "MacBook Air", status: "FAULTY", allocatedTo: null },
+//   { id: 4, serialNo: "DEF321", brand: "Lenovo", model: "ThinkPad X1", status: "RETURNED", allocatedTo: "Jane Smith" },
+// ]
 
 interface DashboardProps {
   role: "ADMIN" | "FACILITATOR"
 }
 
 export default function Dashboard({ role }: DashboardProps) {
+  useAuthRedirect()
   const [search, setSearch] = useState("")
   const [activeTab, setActiveTab] = useState("all")
 
-  const filteredLaptops = mockLaptops.filter((laptop) => {
+  const mockLaptops = useAppSelector(getAllLaptop) || []
+  
+
+  const filteredLaptops = mockLaptops?.filter((laptop) => {
     const matchesSearch =
-      laptop.serialNo.toLowerCase().includes(search.toLowerCase()) ||
-      laptop.brand.toLowerCase().includes(search.toLowerCase()) ||
-      laptop.model.toLowerCase().includes(search.toLowerCase())
+      laptop.serialNo?.toLowerCase().includes(search.toLowerCase()) ||
+      laptop.brand?.toLowerCase().includes(search.toLowerCase()) ||
+      laptop.model?.toLowerCase().includes(search.toLowerCase())
 
     if (activeTab === "all") return matchesSearch
-    return matchesSearch && laptop.status.toLowerCase() === activeTab.toLowerCase()
+    return matchesSearch && laptop.status?.toLowerCase() === activeTab.toLowerCase()
   })
 
   const laptopStats = {
     total: mockLaptops.length,
-    available: mockLaptops.filter((l) => l.status === "AVAILABLE").length,
-    assigned: mockLaptops.filter((l) => l.status === "ASSIGNED").length,
-    faulty: mockLaptops.filter((l) => l.status === "FAULTY").length,
-    returned: mockLaptops.filter((l) => l.status === "RETURNED").length,
+    available: mockLaptops?.filter((l) => l.status?.toUpperCase() === "AVAILABLE").length || 0 ,
+    assigned: mockLaptops?.filter((l) => l.status?.toUpperCase() === "ASSIGNED").length || 0,
+    faulty: mockLaptops?.filter((l) => l.status?.toUpperCase() === "FAULTY").length || 0,
+    returned: mockLaptops?.filter((l) => l.status?.toUpperCase() === "RETURNED").length || 0,
   }
 
-  const handleDelete = (id: number) => {
+
+  const handleDelete = (id: string) => {
     console.log("Delete laptop with ID:", id)
   }
 
-  const handleUpdate = (id: number) => {
+  const handleUpdate = (id: string) => {
     console.log("Update laptop with ID:", id)
   }
 
-  const handleBorrow = (id: number) => {
+  const handleBorrow = (id: string) => {
     console.log("Borrow laptop with ID:", id)
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className=" mx-auto flex flex-col items-center justify-between min-h-screen p-4 space-y-8">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 pb-6 border-b">
         <h1 className="text-3xl font-bold tracking-tight">Laptop Inventory</h1>
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
@@ -69,14 +78,16 @@ export default function Dashboard({ role }: DashboardProps) {
           </div>
           {role === "ADMIN" && (
             <Button className="flex items-center gap-2 whitespace-nowrap">
+              <Link to='/add_laptop' className="flex items-center gap-2">
               <PlusCircle size={16} /> Add Laptop
+              </Link>
             </Button>
           )}
         </div>
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6">
         <LaptopStats stats={laptopStats} />
       </div>
 
@@ -94,13 +105,13 @@ export default function Dashboard({ role }: DashboardProps) {
           {filteredLaptops.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredLaptops.map((laptop) => (
-                <ErrorBoundary key={laptop.id}>
+                <ErrorBoundary key={laptop._id}>
                   <LaptopCard
                     laptop={laptop}
                     role={role}
-                    onDelete={() => handleDelete(laptop.id)}
-                    onUpdate={() => handleUpdate(laptop.id)}
-                    onBorrow={() => handleBorrow(laptop.id)}
+                    onDelete={() => handleDelete(laptop._id)}
+                    onUpdate={() => handleUpdate(laptop._id)}
+                    onBorrow={() => handleBorrow(laptop._id)}
                   />
                 </ErrorBoundary>
               ))}

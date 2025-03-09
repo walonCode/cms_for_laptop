@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Laptop, CheckCircle, BarChart3, Users, ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
@@ -53,12 +54,14 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Button size="lg" className="h-12 px-6">
+              <Button size="lg" className="h-12 px-6 ">
+                <Link to="/login" className="flex items-center">
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-12 px-6">
+              {/* <Button size="lg" variant="outline" className="h-12 px-6">
                 Book a Demo
-              </Button>
+              </Button> */}
             </motion.div>
 
             <motion.div
@@ -119,7 +122,7 @@ export default function Hero() {
                                 : "bg-amber-100 text-amber-800"
                           }`}
                         >
-                          {item === 1 ? "Available" : item === 2 ? "Assigned" : "Maintenance"}
+                          {item === 1 ? "Available" : item === 2 ? "Assigned" : "Faulty"}
                         </div>
                       </div>
                     ))}

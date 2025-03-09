@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, createEntityAdapter, EntityState } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk,EntityState,createEntityAdapter } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../../api/axiosInstance";
 import { RootState } from "../../store";
 
@@ -10,14 +10,23 @@ interface AddLaptop {
 }
 
 interface Laptop extends AddLaptop {
-    _id?: string;
-    allocatedTo?: string;
-    status: string;
+    _id: string;
+    allocatedTo: string | undefined;
+    status: 'AVAILABLE' | 'ASSIGNED' | 'FAULTY' | 'RETURNED';
+    createdAt:string;
+    updatedAt:string,
+    __v : number
+
 }
+
+const laptopAdaptor = createEntityAdapter<Laptop, string>({
+    selectId :(laptop) => laptop._id,
+    sortComparer: (a,b) => (b._id ?? "").localeCompare(a._id ?? ""),
+});
 
 interface LaptopSlice extends EntityState<Laptop, string> {
     errorMessage: string | null;
-    status: "loading" | "idle" | "failed";
+    status: "loading" | "idle" | "failed" | "succeeded";
 }
 
 // Add Laptop Thunk
@@ -28,7 +37,8 @@ export const addLaptop = createAsyncThunk("laptop/addLaptop", async (data: AddLa
             return rejectWithValue("Invalid fields");
         }
         const response = await axiosInstance.post("/laptop", data);
-        return response.data.newLaptop as Laptop;
+        return (await response.data) as Laptop;
+
     } catch (error) {
         console.error(error)
         return rejectWithValue("Failed to add laptop");
@@ -39,7 +49,8 @@ export const addLaptop = createAsyncThunk("laptop/addLaptop", async (data: AddLa
 export const getLaptop = createAsyncThunk("laptop/getLaptop", async (_, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.get("/laptop");
-        return (await response.data.allLaptop || []) as Laptop[];
+        console.log(response.data)
+        return (await response.data.data) as Laptop[];
     } catch (error) {
         console.error(error)
         return rejectWithValue("Failed to fetch laptops");
@@ -53,7 +64,7 @@ export const updateLaptop = createAsyncThunk("laptop/updateLaptop", async (data:
         if (!_id) return rejectWithValue("Laptop ID is required");
 
         const response = await axiosInstance.patch(`/laptop/${_id}`, { brand, model, serialNo, status });
-        return response.data.updateLaptop as Laptop;
+        return (await response.data) as Laptop;
     } catch (error) {
         console.error(error)
         return rejectWithValue("Update failed");
@@ -72,13 +83,9 @@ export const deleteLaptop = createAsyncThunk("laptop/deleteLaptop", async (_id: 
     }
 });
 
-// Entity Adapter
-const laptopAdapter = createEntityAdapter<Laptop,string>({
-    selectId: (laptop) => laptop._id ?? "",
-    sortComparer: (a, b) => (b._id ?? "").localeCompare(a._id ?? ""),
-});
 
-const initialState: LaptopSlice = laptopAdapter.getInitialState({
+
+const initialState: LaptopSlice = laptopAdaptor.getInitialState ({
     errorMessage: null,
     status: "idle",
 });
@@ -95,8 +102,8 @@ const laptopSlice = createSlice({
                 state.errorMessage = null;
             })
             .addCase(addLaptop.fulfilled, (state, action) => {
-                state.status = "idle";
-                laptopAdapter.addOne(state, action.payload);
+                state.status = "succeeded";
+                laptopAdaptor.addOne(state, action.payload);
             })
             .addCase(addLaptop.rejected, (state, action) => {
                 state.status = "failed";
@@ -109,9 +116,8 @@ const laptopSlice = createSlice({
                 state.errorMessage = null;
             })
             .addCase(getLaptop.fulfilled, (state, action) => {
-                state.status = "idle";
-                laptopAdapter.setAll(state, action.payload || []);
-            })
+                state.status = "succeeded";
+                laptopAdaptor.upsertMany(state, action.payload);          })
             .addCase(getLaptop.rejected, (state, action) => {
                 state.status = "failed";
                 state.errorMessage = action.payload as string;
@@ -123,8 +129,8 @@ const laptopSlice = createSlice({
                 state.errorMessage = null;
             })
             .addCase(updateLaptop.fulfilled, (state, action) => {
-                state.status = "idle";
-                laptopAdapter.upsertOne(state, action.payload);
+                state.status = "succeeded";
+                laptopAdaptor.upsertOne(state, action.payload);
             })
             .addCase(updateLaptop.rejected, (state, action) => {
                 state.status = "failed";
@@ -138,7 +144,7 @@ const laptopSlice = createSlice({
             })
             .addCase(deleteLaptop.fulfilled, (state, action) => {
                 state.status = "idle";
-                laptopAdapter.removeOne(state, action.payload);
+                laptopAdaptor.removeOne(state, action.payload);
             })
             .addCase(deleteLaptop.rejected, (state, action) => {
                 state.status = "failed";
@@ -147,10 +153,11 @@ const laptopSlice = createSlice({
     },
 });
 
+//
 export const {
-    selectAll:getAllLaptop,
-    selectById:getLaptopById,
-    selectIds:getLaptopId
-} = laptopAdapter.getSelectors((state:RootState) => state.laptop)
+    selectAll: getAllLaptop,
+    selectById: getLaptopById,
+    selectIds: getLaptopId
+} = laptopAdaptor.getSelectors((state:RootState) => state.laptop);
 
 export default laptopSlice.reducer;
