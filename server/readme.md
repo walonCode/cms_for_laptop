@@ -20,6 +20,7 @@ This is the backend for the **CMS For Laptop** project, built using Node.js, Exp
 - **JWT (JSON Web Token)** - Secure authentication
 - **CORS** - Cross-Origin Resource Sharing
 - **Nodemon** - Development tool for automatic restarts
+- **Zod**  - Data validation and correctness
 
 ## Installation & Setup
 
