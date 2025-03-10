@@ -62,7 +62,9 @@ export const login = asyncHandler(async (req, res) => {
     const userResponse = user.toObject()
     delete userResponse.password;
 
-    return ApiResponse(res, 200, 'user logged in', {userResponse, accessToken})
+    const userToken = jwt.sign(userResponse,process.env.USER_TOKEN_SECRET,{expiresIn:'1d'})
+
+    return ApiResponse(res, 200, 'user logged in', {userToken, accessToken})
 });
 
 export const getUserProfile = asyncHandler(async (req, res) => {

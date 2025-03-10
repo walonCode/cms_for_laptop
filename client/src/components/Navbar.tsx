@@ -1,21 +1,31 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaUser, FaSignInAlt, FaSignOutAlt, FaRegUserCircle } from 'react-icons/fa';
-import { isAuthenticatedState } from "../store/features/users/userSlice";
-import { logout } from '../store/features/users/userSlice';
-import { useAppSelector,useAppDispatch } from "../hooks/storeHook";
 import {LayoutDashboardIcon } from "lucide-react"
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isAuthenticated = useAppSelector(isAuthenticatedState)
-
-  const dispatch = useAppDispatch()
-
-  const user ={ 
-    username:'walon'
+  const navigate = useNavigate()
+  let isAuthenticated;
+  if(Cookies.get("accessToken")){
+    isAuthenticated = true
   }
+
+
+  const logout = () => {
+    Cookies.remove('accessToken')
+    localStorage.removeItem('user')
+    navigate('/login')
+  }
+
+  const token = localStorage.getItem('user');
+  const user = token ? jwtDecode(token) as { username: string } : null;
+  
+  
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -25,8 +35,6 @@ const Navbar = () => {
     <nav className="bg-gray-800 p-4">
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         <Link to="/" className="text-white text-2xl font-bold">CMS </Link>
-
-        
         <ul className={`hidden md:flex space-x-8 ${isMenuOpen ? 'block' : 'block'}`}>
           {isAuthenticated ? (
             <>
@@ -36,11 +44,11 @@ const Navbar = () => {
               </li>
               <li>
                 <Link to="/profile" className="text-white flex items-center hover:text-yellow-400">
-                  <FaUser className="mr-2" /> {user.username}
+                  <FaUser className="mr-2" /> {user?.username}
                 </Link>
               </li>
               <li>
-                <button onClick={() => dispatch(logout())} className="text-white flex items-center hover:text-yellow-400">
+                <button onClick={() => logout()} className="text-white flex items-center hover:text-yellow-400">
                   <FaSignOutAlt className="mr-2" /> Logout
                 </button>
               </li>
@@ -73,9 +81,9 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link to="/profile" className="text-white  flex items-center hover:text-yellow-400">
-                <FaUser className="mr-2" /> {user.username}
+                <FaUser className="mr-2" /> {user?.username}
               </Link>
-              <button onClick={() => dispatch(logout())} className="text-white flex items-center hover:text-yellow-400">
+              <button onClick={() => logout()} className="text-white flex items-center hover:text-yellow-400">
                 <FaSignOutAlt className="mr-2" /> Logout
               </button>
             </>

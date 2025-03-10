@@ -1,6 +1,4 @@
 import { useState } from "react"
-import { useAppDispatch } from "../../hooks/storeHook"
-import { login } from "../../store/features/users/userSlice"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Lock, Mail, LogIn } from "lucide-react"
 import { toast, ToastContainer } from "react-toastify"
 import useAuthRedirect from "@/hooks/useAuthRedirect"
+import { axiosInstance } from "@/api/axiosInstance"
+import Cookies from "js-cookie"
 
 const Login = () => {
   useAuthRedirect()
@@ -16,7 +16,7 @@ const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const dispatch = useAppDispatch()
+  
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,15 +27,18 @@ const Login = () => {
         email,
         password,
       }
-      const resultAction = await dispatch(login(data))
-      if (login.fulfilled.match(resultAction)){
+      const response = await axiosInstance.post("/users/login", data)
+      if (response.status === 200) {
         toast("Login successful")
         navigate("/dashboard")
+        Cookies.set("accessToken", response.data.data.accessToken)
+        localStorage.setItem("user", response.data.data.userToken)
+        console.log(response.data.data.userToken)
         setEmail("")
         setPassword("")
       }else{
         toast("Login failed")
-        console.error("Login failed", resultAction.payload || "unknown error")
+        console.error(response.statusText)
       }
       
     } catch (error) {

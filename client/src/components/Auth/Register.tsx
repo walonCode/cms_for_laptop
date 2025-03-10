@@ -1,10 +1,5 @@
-"use client"
-
 import type React from "react"
-
 import { useState, useEffect } from "react"
-import { register } from "../../store/features/users/userSlice"
-import { useAppDispatch } from "../../hooks/storeHook"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import {toast, ToastContainer} from 'react-toastify'
 import useAuthRedirect from "@/hooks/useAuthRedirect"
+import { axiosInstance } from "@/api/axiosInstance"
 
 const Register = () => {
   useAuthRedirect()
@@ -30,7 +26,6 @@ const Register = () => {
   const [passwordMatch, setPasswordMatch] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   // Check password strength
@@ -96,9 +91,9 @@ const Register = () => {
         role,
       }
 
-      const resultAction = await dispatch(register(data))
+      const response = await axiosInstance.post('/users/register',data)
 
-      if (register.fulfilled.match(resultAction)) {
+      if (response.status === 200) {
         toast('registration successful')
         navigate("/login")
         setConfirmPassword("")
@@ -107,14 +102,8 @@ const Register = () => {
         setEmail("")
         setUsername("")
         setFullname("")
-      } else if (register.rejected.match(resultAction)) {
-        // Handle the error from the rejected action
-        const errorMessage = resultAction.payload
-          ? String(resultAction.payload)
-          : resultAction.error.message || "Registration failed. Please try again."
-
-        setError(errorMessage)
-
+      } else if (response.status === 400) {
+        setError(response.statusText)
         toast("registration failed")
       }
     } catch (error) {

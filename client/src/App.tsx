@@ -9,32 +9,16 @@ import Footer from './components/Footer'
 import Dashboard from './components/Dashboard/Dashboard'
 import Profile from './components/Auth/Profile'
 import AddLaptop from './components/Laptop/AddLaptop'
-import { userState } from './store/features/users/userSlice'
-import { useAppSelector } from './hooks/storeHook'
-import { useEffect } from 'react'
-import Cookies from 'js-cookie'
-import { getUser } from './store/features/users/userSlice.ts'
-import { getLaptop } from './store/features/laptops/laptopSlice.ts'
-import store from './store/store.ts'
+
+
 
 
 
 
 export default function App() {
+
   
 
-  const token = Cookies.get('accessToken')
-
-  useEffect(() => {
-    if (token) {
-      store.dispatch(getUser())
-      store.dispatch(getLaptop())
-    }
-  },[token])
-
-  const user = useAppSelector(userState)
-  console.log(user?.role)
-  
   return(
     <div>
       <Navbar/>
@@ -46,7 +30,7 @@ export default function App() {
 
         <Route element={<RequireAuth/>}>
           <Route path='/profile' element={<Profile/>}/>
-          <Route path='/dashboard' element={<Dashboard role={user?.role} />}/>
+          <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path='/add_laptop' element={<AddLaptop/>}/>
         </Route>
         
