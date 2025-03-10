@@ -19,7 +19,7 @@ import useAuthRedirect from "@/hooks/useAuthRedirect"
 // ]
 
 interface DashboardProps {
-  role: "ADMIN" | "FACILITATOR"
+  role: "ADMIN" | "FACILITATOR" | undefined
 }
 
 export default function Dashboard({ role }: DashboardProps) {

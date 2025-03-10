@@ -65,7 +65,7 @@ interface Laptop {
 }
 
 // Define the role type
-type UserRole = "ADMIN" | "FACILITATOR"
+type UserRole =  undefined | "ADMIN" | "FACILITATOR"
 
 // Define the Props interface with proper typing
 interface LaptopCardProps {

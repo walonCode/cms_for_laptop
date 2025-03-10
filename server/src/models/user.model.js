@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     role: {
       type: String,
       enum: ['ADMIN', 'FACILITATOR'],
-      default: 'USER',
+      default: 'FACILITATOR',
     },
     laptopBorrowed:{
       type:Number,

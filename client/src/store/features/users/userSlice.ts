@@ -8,7 +8,7 @@ interface RegisterData {
     fullname: string;
     username: string;
     email: string;
-    role: string;
+    role: "ADMIN" | "FACILITATOR" ;
     password: string;
 }
 
@@ -16,12 +16,12 @@ interface User extends RegisterData {
     _id?: string;
     laptopBorrowed: number;
     laptop: [];
+    updatedAt: string;
+    createdAt:string;
+    __v:number
 }
 
-interface Response {
-    userResponse: User;
-    accessToken: string;
-}
+
 
 interface LoginData {
     email: string;
@@ -42,6 +42,7 @@ const initialState: Slice = {
 
 
 
+
 // Login Thunk
 export const login = createAsyncThunk('user/login', async (data: LoginData, { rejectWithValue }) => {
     try {
@@ -51,7 +52,8 @@ export const login = createAsyncThunk('user/login', async (data: LoginData, { re
         }
         const response = await axiosInstance.post('/users/login', data);
         Cookies.set("accessToken", response.data.data.accessToken, { expires: 1, secure:true });
-        return (await response.data.data.userResponse) as Response;
+        console.log(response.data.data.userResponse)
+        return (await response.data.data.userResponse) as User;
     } catch (error) {
        console.error(error)
        return rejectWithValue("Login failed");
@@ -76,7 +78,7 @@ export const register = createAsyncThunk('user/register', async (data: RegisterD
 export const getUser = createAsyncThunk('user/getUser',async(_,{rejectWithValue}) => {
     try{
         const response = await axiosInstance.get('/users/profile')
-        return (await response.data.data.userResponse) as User
+        return (await response.data) as User
     }catch(error){
         console.log(error)
         return rejectWithValue('getting user profile failed')
@@ -97,7 +99,7 @@ const userSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(login.fulfilled, (state, action) => {
-                state.user = action.payload?.userResponse;
+                state.user = action.payload;
                 state.isAuthenticated = true;
                 state.errorMessage = null;
             })
@@ -110,7 +112,15 @@ const userSlice = createSlice({
             })
             .addCase(register.rejected, (state, action) => {
                 state.errorMessage = action.payload as string;
-            });
+            })
+            .addCase(getUser.fulfilled, (state, action) => {
+                return{
+                    ...state,
+                    user: action.payload,
+                    isAuthenticated: true,
+                    errorMessage: null
+                }
+            })
     }
 });
 
