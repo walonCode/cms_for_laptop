@@ -19,8 +19,12 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { jwtDecode } from "jwt-decode"
 
 // Mock data based on the provided schema
+
+const token = localStorage.getItem('user')
+const user = token ? jwtDecode(token) as User : null
 const mockUser = {
   fullname: "Jane Doe",
   username: "janedoe",
@@ -29,17 +33,21 @@ const mockUser = {
   laptopBorrowed: 1,
   createdAt: "2023-09-15T10:30:00Z",
   updatedAt: "2024-03-05T14:45:00Z",
-  laptops: [
-    {
-      _id: "laptop123",
-      brand: "Dell",
-      model: "XPS 13",
-      serialNumber: "DL-XPS13-2023-001",
-      status: "BORROWED",
-      borrowedDate: "2024-02-20T09:15:00Z",
-    },
-  ],
+  laptops: [],
 }
+
+interface User {
+  fullname: string,
+  username: string,
+  email: string,
+  role: string, // Change to "FACILITATOR" to see the difference
+  laptopBorrowed: number,
+  createdAt: string,
+  updatedAt: string,
+  laptops: [],
+}
+
+
 
 // Mock system stats for admin view
 const mockSystemStats = {
@@ -56,10 +64,10 @@ const mockSystemStats = {
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview")
-  const isAdmin = mockUser.role === "ADMIN"
+  const isAdmin = user?.role === "ADMIN"
 
   // Format date to readable format
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | undefined) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -80,24 +88,24 @@ export default function ProfilePage() {
         >
           <div className="flex items-center gap-4">
             <Avatar className={`h-20 w-20 ${isAdmin ? "ring-2 ring-blue-500 ring-offset-2" : ""}`}>
-              <AvatarImage src="/placeholder.svg?height=80&width=80" alt={mockUser.fullname} />
+              <AvatarImage src="/placeholder.svg?height=80&width=80" alt={user?.fullname} />
               <AvatarFallback className="text-2xl">
-                {mockUser.fullname
+                {user?.fullname
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl font-bold">{mockUser.fullname}</h1>
+              <h1 className="text-2xl font-bold">{user?.fullname}</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <User size={16} />
-                <span>@{mockUser.username}</span>
+                <span>@{user?.username}</span>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant={isAdmin ? "destructive" : "secondary"} className={isAdmin ? "font-medium" : ""}>
                   {isAdmin && <Shield size={14} className="mr-1" />}
-                  {mockUser.role}
+                  {user?.role}
                 </Badge>
                 {isAdmin && (
                   <Badge
@@ -142,24 +150,24 @@ export default function ProfilePage() {
               <CardContent className="space-y-4">
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Full Name</p>
-                  <p className="font-medium">{mockUser.fullname}</p>
+                  <p className="font-medium">{user?.fullname}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Username</p>
-                  <p className="font-medium">@{mockUser.username}</p>
+                  <p className="font-medium">@{user?.username}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Email</p>
                   <div className="flex items-center gap-2">
                     <Mail size={16} className="text-muted-foreground" />
-                    <p className="font-medium">{mockUser.email}</p>
+                    <p className="font-medium">{user?.email}</p>
                   </div>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Role</p>
                   <div className="flex items-center gap-2">
                     <Shield size={16} className={isAdmin ? "text-red-500" : "text-muted-foreground"} />
-                    <p className={`font-medium ${isAdmin ? "text-red-500" : ""}`}>{mockUser.role}</p>
+                    <p className={`font-medium ${isAdmin ? "text-red-500" : ""}`}>{user?.role}</p>
                   </div>
                   {isAdmin && (
                     <p className="text-xs text-muted-foreground mt-1">
@@ -182,14 +190,14 @@ export default function ProfilePage() {
                   <p className="text-sm text-muted-foreground">Member Since</p>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} className="text-muted-foreground" />
-                    <p className="font-medium">{formatDate(mockUser.createdAt)}</p>
+                    <p className="font-medium">{formatDate(user?.createdAt)}</p>
                   </div>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Last Updated</p>
                   <div className="flex items-center gap-2">
                     <Clock size={16} className="text-muted-foreground" />
-                    <p className="font-medium">{formatDate(mockUser.updatedAt)}</p>
+                    <p className="font-medium">{formatDate(user?.updatedAt)}</p>
                   </div>
                 </div>
                 {isAdmin && (
@@ -272,7 +280,7 @@ export default function ProfilePage() {
                         <CardContent>
                           <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                              <span className="text-3xl font-bold">{mockUser.laptopBorrowed}</span>
+                              <span className="text-3xl font-bold">{user?.laptopBorrowed}</span>
                               <span className="text-muted-foreground text-sm">Borrowed</span>
                             </div>
                             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -290,7 +298,7 @@ export default function ProfilePage() {
                           <div className="flex items-center justify-between">
                             <div className="flex flex-col">
                               <span className={`text-xl font-bold ${isAdmin ? "text-red-500" : ""}`}>
-                                {mockUser.role}
+                                {user?.role}
                               </span>
                               <span className="text-muted-foreground text-sm">
                                 {isAdmin ? "Full System Access" : "Standard Access"}
@@ -370,7 +378,7 @@ export default function ProfilePage() {
                           <div>
                             <p className="font-medium">Borrowed a laptop</p>
                             <p className="text-sm text-muted-foreground">
-                              You borrowed a Dell XPS 13 laptop on {formatDate(mockUser.laptops[0].borrowedDate)}
+                              You borrowed a Dell XPS 13 laptop on
                             </p>
                           </div>
                         </div>
@@ -382,7 +390,7 @@ export default function ProfilePage() {
                           <div>
                             <p className="font-medium">Account updated</p>
                             <p className="text-sm text-muted-foreground">
-                              Your account details were updated on {formatDate(mockUser.updatedAt)}
+                              Your account details were updated on {formatDate(user?.updatedAt)}
                             </p>
                           </div>
                         </div>

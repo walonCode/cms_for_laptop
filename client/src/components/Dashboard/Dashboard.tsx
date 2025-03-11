@@ -10,22 +10,20 @@ import { Link } from "react-router-dom"
 import { useAppSelector } from "@/hooks/storeHook"
 import { getAllLaptop } from "@/store/features/laptops/laptopSlice"
 import useAuthRedirect from "@/hooks/useAuthRedirect"
+import { jwtDecode } from "jwt-decode"
 
-// const mockLaptops = [
-//   { id: 1, serialNo: "ABC123", brand: "Dell", model: "XPS 13", status: "AVAILABLE", allocatedTo: null },
-//   { id: 2, serialNo: "XYZ456", brand: "HP", model: "Pavilion 15", status: "ASSIGNED", allocatedTo: "John Doe" },
-//   { id: 3, serialNo: "LMN789", brand: "Apple", model: "MacBook Air", status: "FAULTY", allocatedTo: null },
-//   { id: 4, serialNo: "DEF321", brand: "Lenovo", model: "ThinkPad X1", status: "RETURNED", allocatedTo: "Jane Smith" },
-// ]
-
-interface DashboardProps {
-  role: "ADMIN" | "FACILITATOR" | undefined
+interface Role{
+  role:string
 }
 
-export default function Dashboard({ role }: DashboardProps) {
+export default function Dashboard() {
   useAuthRedirect()
   const [search, setSearch] = useState("")
   const [activeTab, setActiveTab] = useState("all")
+
+  const token = localStorage.getItem('user')
+  const role = token ? jwtDecode(token) as  Role : null
+  console.log(role?.role)
 
   const mockLaptops = useAppSelector(getAllLaptop) || []
   
@@ -76,7 +74,7 @@ export default function Dashboard({ role }: DashboardProps) {
               className="pl-8 bg-background"
             />
           </div>
-          {role === "ADMIN" && (
+          {role?.role === "ADMIN" && (
             <Button className="flex items-center gap-2 whitespace-nowrap">
               <Link to='/add_laptop' className="flex items-center gap-2">
               <PlusCircle size={16} /> Add Laptop
@@ -108,7 +106,7 @@ export default function Dashboard({ role }: DashboardProps) {
                 <ErrorBoundary key={laptop._id}>
                   <LaptopCard
                     laptop={laptop}
-                    role={role}
+                    role={role?.role}
                     onDelete={() => handleDelete(laptop._id)}
                     onUpdate={() => handleUpdate(laptop._id)}
                     onBorrow={() => handleBorrow(laptop._id)}

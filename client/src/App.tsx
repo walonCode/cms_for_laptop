@@ -16,9 +16,6 @@ import AddLaptop from './components/Laptop/AddLaptop'
 
 
 export default function App() {
-
-  
-
   return(
     <div>
       <Navbar/>

@@ -65,7 +65,7 @@ interface Laptop {
 }
 
 // Define the role type
-type UserRole =  undefined | "ADMIN" | "FACILITATOR"
+type UserRole =  string | undefined
 
 // Define the Props interface with proper typing
 interface LaptopCardProps {
@@ -84,7 +84,6 @@ const defaultStatusConfig: StatusConfig = {
 }
 
 export default function LaptopCard({ laptop, role, onDelete, onUpdate, onBorrow }: LaptopCardProps) {
-  // If laptop is undefined or null, render a placeholder card
   if (!laptop) {
     return (
       <Card className="overflow-hidden transition-all hover:shadow-md opacity-70">
