@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addLaptop } from "@/store/features/laptops/laptopSlice";
+import { addLaptop, getLaptop } from "@/store/features/laptops/laptopSlice";
 import { useAppDispatch } from "@/hooks/storeHook";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ export default function AddLaptop() {
       const action = await dispatch(addLaptop(data));
       if (addLaptop.fulfilled.match(action)) {
         toast.success("Laptop added successfully");
+        await dispatch(getLaptop())
         navigate('/dashboard')
         setBrand("");
         setModel("");
